@@ -33,11 +33,6 @@ module.exports = {
             return res.status(403).json({message: "Ошибка доступа"}).end();
         }
 
-        console.log({
-            from: new Date(dateTime.from),
-            to: new Date(dateTime.to),
-        });
-
         let createdHelpRequest;
         if (!(createdHelpRequest = await HelpRequestModel.create(
             {
@@ -164,16 +159,30 @@ module.exports = {
                         from: ModelReferences.account.name,
                         localField: "authorAccountId",
                         foreignField: "_id",
-                        as: "contactAccount",
+                        as: "authorAccount",
                         pipeline: [
+                            {
+                                $lookup: {
+                                    from: ModelReferences.organization.name,
+                                    localField: "_id",
+                                    foreignField: "contactAccountId",
+                                    as: "organization",
+                                    pipeline: [
+                                        {
+                                            $limit: 1
+                                        }
+                                    ] 
+                                },
+                            },
+                            
                             {
                                 $project: {
                                     __v: 0,
-                                    phone: 0,
                                     dateBorn: 0,
                                     passwordHash: 0,
                                 }
                             },  
+
                             {
                                 $limit: 1
                             }
@@ -185,7 +194,7 @@ module.exports = {
                 },
                 {
                     $lookup: {
-                        from: ModelReferences.account.name,
+                        from: ModelReferences.specification.name,
                         localField: "specificationIds",
                         foreignField: "_id",
                         as: "specifiations",
