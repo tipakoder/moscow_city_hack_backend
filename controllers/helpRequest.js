@@ -227,8 +227,7 @@ module.exports = {
             [
                 {
                     $match: {
-                        isVerify: true,
-                        authorAccountId: {$ne: req.account._id}
+                        isVerify: true
                     }
                 },
                 {

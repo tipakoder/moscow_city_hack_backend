@@ -65,7 +65,6 @@ module.exports = {
         this.router.get(
             "/getList", 
             [
-                AuthMiddleware,
                 HelpRequestController.getList.bind(HelpRequestController)
             ]
         );
